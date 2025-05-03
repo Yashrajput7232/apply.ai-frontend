@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'CareerAI - AI-Powered Job Application Assistant',
+  title: 'Apply.ai - AI-Powered Job Application Assistant',
   description: 'Tailor your resume and find jobs with AI.',
 };
 

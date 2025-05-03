@@ -11,7 +11,7 @@ export default function Header() {
         <Link href="/" className="flex items-center space-x-2">
           <Briefcase className="h-6 w-6 text-primary" />
           <span className="font-bold sm:inline-block">
-            CareerAI
+            Apply.ai
           </span>
         </Link>
 

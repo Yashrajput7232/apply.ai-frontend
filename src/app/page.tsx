@@ -11,7 +11,7 @@ export default function LandingPage() {
       <section className="flex-grow flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/30">
         <Briefcase className="h-16 w-16 text-primary mb-4" />
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-          Welcome to CareerAI
+          Welcome to Apply.ai
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
