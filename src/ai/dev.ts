@@ -1,1 +1,2 @@
-// Flows will be imported for their side effects in this file.
+import '@/ai/flows/ats-resume-tailor.ts';
+import '@/ai/flows/generate-hr-outreach-email.ts';
