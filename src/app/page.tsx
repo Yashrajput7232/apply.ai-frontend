@@ -1,10 +1,16 @@
 
+'use client'; // Need client component for hooks and actions
+
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Briefcase, Target, Mail, FileText } from 'lucide-react';
+import { Briefcase, Target, Mail, FileText, LogIn } from 'lucide-react';
+import { useSession, signIn } from 'next-auth/react'; // Import next-auth hooks
 
 export default function LandingPage() {
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -16,11 +22,23 @@ export default function LandingPage() {
         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
         </p>
-        <Link href="/dashboard">
-          <Button size="lg">
-            Get Started
+        {!isLoading && !session && (
+          <Button size="lg" onClick={() => signIn('google', { callbackUrl: '/dashboard' })}>
+            <LogIn className="mr-2 h-5 w-5" /> Sign In with Google to Get Started
           </Button>
-        </Link>
+        )}
+        {!isLoading && session && (
+          <Link href="/dashboard">
+            <Button size="lg">
+              Go to Dashboard
+            </Button>
+          </Link>
+        )}
+         {isLoading && (
+            <Button size="lg" disabled>
+                Loading...
+            </Button>
+         )}
       </section>
 
       {/* Features Section */}
@@ -79,11 +97,23 @@ export default function LandingPage() {
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
             Ready to boost your job search?
           </h2>
-          <Link href="/dashboard">
-            <Button variant="default" size="lg">
-              Access Your Dashboard
+          {!isLoading && !session && (
+            <Button variant="default" size="lg" onClick={() => signIn('google', { callbackUrl: '/dashboard' })}>
+               <LogIn className="mr-2 h-5 w-5" /> Sign In to Access Dashboard
             </Button>
-          </Link>
+          )}
+          {!isLoading && session && (
+             <Link href="/dashboard">
+                <Button variant="default" size="lg">
+                    Access Your Dashboard
+                </Button>
+             </Link>
+          )}
+           {isLoading && (
+            <Button variant="default" size="lg" disabled>
+                Loading...
+            </Button>
+           )}
         </div>
       </section>
     </div>
