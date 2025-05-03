@@ -1,11 +1,16 @@
 
+'use client'; // Add 'use client' because we are using useState
+
+import { useState } from 'react'; // Import useState
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import ResumeUpload from "@/components/dashboard/ResumeUpload";
 import JobListings from "@/components/dashboard/JobListings";
 import AtsResumeTailor from "@/components/dashboard/AtsResumeTailor";
-// import { Separator } from "@/components/ui/separator"; // Separator not currently used
 
 export default function Dashboard() {
+  // State for the currently selected/uploaded resume file
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+
   return (
     <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6 text-foreground">Dashboard</h1>
@@ -16,20 +21,22 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Upload Your Resume</CardTitle>
-              <CardDescription>Upload your latest resume (PDF or DOCX).</CardDescription>
+              <CardDescription>Select your latest resume (PDF or DOCX) to tailor.</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResumeUpload />
+              {/* Pass state and setter to ResumeUpload */}
+              <ResumeUpload selectedFile={resumeFile} setSelectedFile={setResumeFile} />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>Tailor Your Resume</CardTitle>
-              <CardDescription>Optimize your resume for a specific job using AI.</CardDescription>
+              <CardDescription>Optimize your selected resume for a specific job using AI.</CardDescription>
             </CardHeader>
             <CardContent>
-              <AtsResumeTailor />
+              {/* Pass the selected file to AtsResumeTailor */}
+              <AtsResumeTailor selectedResumeFile={resumeFile} />
             </CardContent>
           </Card>
         </div>

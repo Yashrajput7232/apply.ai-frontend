@@ -1,18 +1,17 @@
+
 'use client';
 
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Label } from '@/components/ui/label';
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea"; // Use Textarea for job description
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, Wand2, Download, ClipboardCopy, AlertCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { atsResumeTailor, type AtsResumeTailorInput, type AtsResumeTailorOutput } from '@/ai/flows/ats-resume-tailor'; // Assuming AI flow is in this path
-import { scrapeJobDescription, type JobDescription } from '@/services/job-scraper'; // Import scraper
-
+import { atsResumeTailor, type AtsResumeTailorInput, type AtsResumeTailorOutput } from '@/ai/flows/ats-resume-tailor';
+import { scrapeJobDescription, type JobDescription } from '@/services/job-scraper';
 
 // Helper function to read file as Data URI
 function readFileAsDataURI(file: File): Promise<string> {
@@ -24,19 +23,11 @@ function readFileAsDataURI(file: File): Promise<string> {
   });
 }
 
-// Mock function to get uploaded resumes (replace with actual fetch)
-async function getUploadedResumes(): Promise<{ id: string, name: string }[]> {
-  // In a real app, fetch this list from Firebase Storage/Firestore
-  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate fetch
-  return [
-    { id: 'resume_1', name: 'My_Resume_v1.pdf' },
-    { id: 'resume_2', name: 'Software_Engineer_Resume.docx' },
-  ];
+interface AtsResumeTailorProps {
+    selectedResumeFile: File | null;
 }
 
-export default function AtsResumeTailor() {
-  const [uploadedResumes, setUploadedResumes] = useState<{ id: string, name: string }[]>([]);
-  const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
+export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorProps) {
   const [jobDescription, setJobDescription] = useState('');
   const [jobUrl, setJobUrl] = useState('');
   const [tailoredResume, setTailoredResume] = useState<string | null>(null);
@@ -45,19 +36,10 @@ export default function AtsResumeTailor() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+ // Clear tailored resume if the selected file changes or job description is cleared
  useEffect(() => {
-    // Fetch uploaded resumes on component mount
-    const fetchResumes = async () => {
-      // In a real app, you might need authentication context here
-      const resumes = await getUploadedResumes();
-      setUploadedResumes(resumes);
-      // Optionally pre-select the first resume
-      // if (resumes.length > 0) {
-      //   setSelectedResumeId(resumes[0].id);
-      // }
-    };
-    fetchResumes();
-  }, []);
+    setTailoredResume(null);
+ }, [selectedResumeFile, jobDescription]);
 
 
   const handleScrapeJob = async () => {
@@ -68,13 +50,14 @@ export default function AtsResumeTailor() {
     setIsScraping(true);
     setError(null);
     try {
-      const result: JobDescription = await scrapeJobDescription(jobUrl); // Use the imported function
+      const result: JobDescription = await scrapeJobDescription(jobUrl);
       setJobDescription(result.description);
        toast({ title: "Job description scraped successfully." });
     } catch (err) {
       console.error("Error scraping job description:", err);
-      setError("Failed to scrape job description. Please check the URL or try again later.");
-      toast({ variant: "destructive", title: "Scraping Error", description: "Could not fetch job description." });
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred during scraping.";
+      setError(`Failed to scrape job description: ${errorMessage}`);
+      toast({ variant: "destructive", title: "Scraping Error", description: errorMessage });
     } finally {
       setIsScraping(false);
     }
@@ -82,8 +65,8 @@ export default function AtsResumeTailor() {
 
 
   const handleTailorResume = async () => {
-    if (!selectedResumeId) {
-      toast({ variant: "destructive", title: "Please select a resume." });
+    if (!selectedResumeFile) {
+      toast({ variant: "destructive", title: "Please select a resume file above." });
       return;
     }
     if (!jobDescription.trim()) {
@@ -96,30 +79,24 @@ export default function AtsResumeTailor() {
     setTailoredResume(null); // Clear previous result
 
     try {
-      // TODO: This part needs refinement. We need the *actual file content* as a data URI,
-      // not just the ID. In a real app:
-      // 1. Fetch the file URL from Firebase Storage using the selectedResumeId.
-      // 2. Download the file blob.
-      // 3. Convert the blob to a data URI using readFileAsDataURI or similar.
-
-      // *** Placeholder: Using a fake data URI ***
-      // Find the selected resume name to get a fake MIME type
-      const selectedResume = uploadedResumes.find(r => r.id === selectedResumeId);
-      const fakeMimeType = selectedResume?.name.endsWith('.pdf') ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-      const fakeBase64 = 'FAKE_BASE64_ENCODED_CONTENT'; // Replace with actual content conversion
-      const resumeDataUri = `data:${fakeMimeType};base64,${fakeBase64}`;
-       // *** End Placeholder ***
+       // Convert the selected file to a data URI
+      const resumeDataUri = await readFileAsDataURI(selectedResumeFile);
 
       if (!resumeDataUri) {
-        throw new Error("Could not retrieve resume data."); // Handle error if resume fetch fails
+        throw new Error("Could not read resume file."); // Handle error if reading fails
+      }
+
+      // Validate data URI structure (basic check)
+      if (!resumeDataUri.startsWith('data:') || !resumeDataUri.includes(';base64,')) {
+          throw new Error("Invalid data URI format generated from file.");
       }
 
       const input: AtsResumeTailorInput = {
-        resumeDataUri: resumeDataUri, // Use the actual or placeholder data URI
+        resumeDataUri: resumeDataUri, // Use the REAL data URI
         jobDescription: jobDescription,
       };
 
-      console.log("Calling AI Tailor with input:", {jobDescriptionLength: jobDescription.length, resumeUriStart: resumeDataUri.substring(0, 50)});
+      console.log("Calling AI Tailor with input:", {jobDescriptionLength: jobDescription.length, resumeUriStart: resumeDataUri.substring(0, 80) + '...'});
 
       const result: AtsResumeTailorOutput = await atsResumeTailor(input);
 
@@ -153,13 +130,15 @@ export default function AtsResumeTailor() {
   };
 
   const handleDownload = () => {
-    if (tailoredResume) {
-      // Simple text download. For PDF/DOCX, a backend conversion would be needed.
-      const blob = new Blob([tailoredResume], { type: 'text/plain' });
+    if (tailoredResume && selectedResumeFile) {
+      // Simple text download.
+      const blob = new Blob([tailoredResume], { type: 'text/plain;charset=utf-8' }); // Ensure UTF-8
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `tailored_resume_${selectedResumeId}.txt`; // Suggest a filename
+      // Create filename based on original, e.g., My_Resume_v1_tailored.txt
+      const originalName = selectedResumeFile.name.replace(/\.(pdf|docx)$/i, '');
+      a.download = `${originalName}_tailored.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -170,43 +149,21 @@ export default function AtsResumeTailor() {
 
   return (
     <div className="space-y-6">
-      {/* Resume Selection */}
-      <div className="space-y-2">
-        <Label htmlFor="resume-select">Select Resume to Tailor</Label>
-         <Select
-            value={selectedResumeId ?? ""}
-            onValueChange={(value) => setSelectedResumeId(value)}
-            disabled={isLoading || isScraping}
-        >
-            <SelectTrigger id="resume-select" className="w-full">
-            <SelectValue placeholder="Choose your uploaded resume" />
-            </SelectTrigger>
-            <SelectContent>
-            {uploadedResumes.length > 0 ? (
-                uploadedResumes.map((resume) => (
-                <SelectItem key={resume.id} value={resume.id}>
-                    {resume.name}
-                </SelectItem>
-                ))
-            ) : (
-                <SelectItem value="no-resumes" disabled>No resumes uploaded yet</SelectItem>
-            )}
-            </SelectContent>
-        </Select>
-      </div>
+       {/* Removed Resume Selection - now handled by parent */}
 
       {/* Job Description Input */}
       <div className="space-y-2">
          <Label htmlFor="job-url">Job Posting URL (Optional)</Label>
-         <div className="flex gap-2">
+         <div className="flex flex-wrap sm:flex-nowrap gap-2"> {/* Allow wrap on small screens */}
             <Input
                 id="job-url"
                 placeholder="https://www.linkedin.com/jobs/view/..."
                 value={jobUrl}
                 onChange={(e) => setJobUrl(e.target.value)}
                 disabled={isLoading || isScraping}
+                className="flex-grow min-w-[150px]" // Ensure input takes space
             />
-            <Button onClick={handleScrapeJob} disabled={isLoading || isScraping || !jobUrl}>
+            <Button onClick={handleScrapeJob} disabled={isLoading || isScraping || !jobUrl} className="flex-shrink-0"> {/* Prevent button shrinking */}
                 {isScraping ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Scrape Job
             </Button>
@@ -219,8 +176,8 @@ export default function AtsResumeTailor() {
             placeholder="Paste the full job description here, or scrape it using the URL above."
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
-            rows={10} // Make it reasonably tall
-            className="min-h-[150px]"
+            rows={10}
+            className="min-h-[150px] resize-y" // Allow vertical resize
             disabled={isLoading || isScraping}
           />
        </div>
@@ -229,7 +186,7 @@ export default function AtsResumeTailor() {
       {/* Action Button */}
       <Button
         onClick={handleTailorResume}
-        disabled={isLoading || isScraping || !selectedResumeId || !jobDescription.trim()}
+        disabled={isLoading || isScraping || !selectedResumeFile || !jobDescription.trim()}
         className="w-full"
       >
         {isLoading ? (
@@ -253,22 +210,23 @@ export default function AtsResumeTailor() {
       {/* Tailored Resume Output */}
       {tailoredResume && (
         <div className="space-y-4 pt-4 border-t">
-           <div className="flex justify-between items-center">
+           <div className="flex flex-wrap justify-between items-center gap-2"> {/* Allow wrapping */}
              <h3 className="text-lg font-semibold">Tailored Resume Preview</h3>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0"> {/* Prevent shrinking */}
                  <Button variant="outline" size="sm" onClick={handleCopyToClipboard}>
-                    <ClipboardCopy className="mr-2 h-4 w-4" /> Copy
+                    <ClipboardCopy className="mr-1 sm:mr-2 h-4 w-4" /> Copy
                  </Button>
                  <Button variant="outline" size="sm" onClick={handleDownload}>
-                    <Download className="mr-2 h-4 w-4" /> Download
+                    <Download className="mr-1 sm:mr-2 h-4 w-4" /> Download
                  </Button>
               </div>
            </div>
 
           <ScrollArea className="h-72 w-full rounded-md border p-4 bg-muted/50">
-            <pre className="text-sm whitespace-pre-wrap">{tailoredResume}</pre>
+            {/* Use pre-wrap for line breaks and whitespace, overflow-x-auto for long lines */}
+            <pre className="text-sm whitespace-pre-wrap break-words">{tailoredResume}</pre>
           </ScrollArea>
-            <p className="text-xs text-muted-foreground">Note: Download provides a text file. For formatted documents, further processing might be needed.</p>
+            <p className="text-xs text-muted-foreground">Note: Download provides a text file. Copy/paste this into your original document or a new one.</p>
         </div>
       )}
     </div>
