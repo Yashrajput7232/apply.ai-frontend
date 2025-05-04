@@ -5,7 +5,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/Header';
 import { Toaster } from "@/components/ui/toaster"; // Import Toaster
-import SessionProviderWrapper from '@/components/auth/SessionProviderWrapper'; // Import the wrapper
+
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,15 +30,13 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        {/* Wrap everything inside SessionProviderWrapper */}
-        <SessionProviderWrapper>
+        {/* Removed SessionProviderWrapper */}
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
             {/* Optional Footer can be added here */}
           </div>
           <Toaster /> {/* Add Toaster component here */}
-        </SessionProviderWrapper>
       </body>
     </html>
   );

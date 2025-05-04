@@ -1,15 +1,14 @@
 
-'use client'; // Need client component for hooks and actions
+'use client'; // Keep 'use client' if other client-side interactions remain, otherwise remove.
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Briefcase, Target, Mail, FileText, LogIn } from 'lucide-react';
-import { useSession, signIn } from 'next-auth/react'; // Import next-auth hooks
+import { Briefcase, Target, Mail, FileText } from 'lucide-react'; // Removed LogIn
+// Removed useSession and signIn imports
 
 export default function LandingPage() {
-  const { data: session, status } = useSession();
-  const isLoading = status === 'loading';
+  // Removed session and status related hooks and variables
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -22,23 +21,13 @@ export default function LandingPage() {
         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
         </p>
-        {!isLoading && !session && (
-          <Button size="lg" onClick={() => signIn('google', { callbackUrl: '/dashboard' })}>
-            <LogIn className="mr-2 h-5 w-5" /> Sign In with Google to Get Started
-          </Button>
-        )}
-        {!isLoading && session && (
-          <Link href="/dashboard">
+        {/* Removed conditional rendering based on session/loading */}
+        {/* Direct link to Dashboard */}
+        <Link href="/dashboard">
             <Button size="lg">
-              Go to Dashboard
+                Go to Dashboard
             </Button>
-          </Link>
-        )}
-         {isLoading && (
-            <Button size="lg" disabled>
-                Loading...
-            </Button>
-         )}
+        </Link>
       </section>
 
       {/* Features Section */}
@@ -97,23 +86,13 @@ export default function LandingPage() {
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
             Ready to boost your job search?
           </h2>
-          {!isLoading && !session && (
-            <Button variant="default" size="lg" onClick={() => signIn('google', { callbackUrl: '/dashboard' })}>
-               <LogIn className="mr-2 h-5 w-5" /> Sign In to Access Dashboard
-            </Button>
-          )}
-          {!isLoading && session && (
-             <Link href="/dashboard">
-                <Button variant="default" size="lg">
-                    Access Your Dashboard
-                </Button>
-             </Link>
-          )}
-           {isLoading && (
-            <Button variant="default" size="lg" disabled>
-                Loading...
-            </Button>
-           )}
+           {/* Removed conditional rendering based on session/loading */}
+           {/* Direct link to Dashboard */}
+           <Link href="/dashboard">
+              <Button variant="default" size="lg">
+                  Access Your Dashboard
+              </Button>
+           </Link>
         </div>
       </section>
     </div>

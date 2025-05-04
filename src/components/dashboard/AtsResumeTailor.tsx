@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react'; // Added ChangeEvent
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Wand2, Download, ClipboardCopy, AlertCircle } from 'lucide-react';
+import { Loader2, Wand2, Download, ClipboardCopy, AlertCircle, FileText, Trash2 } from 'lucide-react'; // Added FileText, Trash2
 import { useToast } from "@/hooks/use-toast";
 import { atsResumeTailor, type AtsResumeTailorInput, type AtsResumeTailorOutput } from '@/ai/flows/ats-resume-tailor';
 import { scrapeJobDescription, type JobDescription } from '@/services/job-scraper';
@@ -23,11 +23,13 @@ function readFileAsDataURI(file: File): Promise<string> {
   });
 }
 
-interface AtsResumeTailorProps {
-    selectedResumeFile: File | null;
-}
+// Removed AtsResumeTailorProps interface
+// interface AtsResumeTailorProps {
+//     selectedResumeFile: File | null;
+// }
 
-export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorProps) {
+export default function AtsResumeTailor(/* Removed selectedResumeFile prop: { selectedResumeFile }: AtsResumeTailorProps */) {
+  const [selectedResumeFile, setSelectedResumeFile] = useState<File | null>(null); // Added state for selected file
   const [jobDescription, setJobDescription] = useState('');
   const [jobUrl, setJobUrl] = useState('');
   const [tailoredResume, setTailoredResume] = useState<string | null>(null);
@@ -41,6 +43,42 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
     setTailoredResume(null);
  }, [selectedResumeFile, jobDescription]);
 
+ // Handler for file input changes (moved from ResumeUpload)
+ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      if (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        setSelectedResumeFile(file);
+        toast({
+          title: "Resume Selected",
+          description: `${file.name}`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Invalid File Type",
+          description: "Please upload a PDF or DOCX file.",
+        });
+        setSelectedResumeFile(null);
+        event.target.value = ''; // Clear the input
+      }
+    } else {
+      setSelectedResumeFile(null);
+      event.target.value = '';
+    }
+  };
+
+  // Handler for removing the selected file (moved from ResumeUpload)
+  const handleRemoveFile = () => {
+    setSelectedResumeFile(null);
+    const fileInput = document.getElementById('resume-upload') as HTMLInputElement;
+    if(fileInput) fileInput.value = '';
+    toast({
+      title: "File Removed",
+      description: "Selection cleared.",
+    });
+  };
+
 
   const handleScrapeJob = async () => {
     if (!jobUrl) {
@@ -50,6 +88,8 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
     setIsScraping(true);
     setError(null);
     try {
+      // NOTE: scrapeJobDescription is a mock/placeholder
+      // In a real app, this might be a server action or API route
       const result: JobDescription = await scrapeJobDescription(jobUrl);
       setJobDescription(result.description);
        toast({ title: "Job description scraped successfully." });
@@ -66,7 +106,7 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
 
   const handleTailorResume = async () => {
     if (!selectedResumeFile) {
-      toast({ variant: "destructive", title: "Please select a resume file above." });
+      toast({ variant: "destructive", title: "Please select a resume file first." });
       return;
     }
     if (!jobDescription.trim()) {
@@ -82,23 +122,28 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
        // Convert the selected file to a data URI
       const resumeDataUri = await readFileAsDataURI(selectedResumeFile);
 
+      // Basic check in case file reading fails silently
       if (!resumeDataUri) {
-        throw new Error("Could not read resume file."); // Handle error if reading fails
+           throw new Error("Could not read resume file.");
       }
-
-      // Validate data URI structure (basic check)
+       // Add stronger validation
       if (!resumeDataUri.startsWith('data:') || !resumeDataUri.includes(';base64,')) {
           throw new Error("Invalid data URI format generated from file.");
       }
+       // Remove potential metadata/charset before base64 part for the AI
+      const base64Data = resumeDataUri.substring(resumeDataUri.indexOf(',') + 1);
+      const mimeType = resumeDataUri.substring(resumeDataUri.indexOf(':') + 1, resumeDataUri.indexOf(';'));
+      const cleanDataUri = `data:${mimeType};base64,${base64Data}`;
+
 
       const input: AtsResumeTailorInput = {
-        resumeDataUri: resumeDataUri, // Use the REAL data URI
+        resumeDataUri: cleanDataUri, // Use the cleaned data URI
         jobDescription: jobDescription,
       };
 
-      console.log("Calling AI Tailor with input:", {jobDescriptionLength: jobDescription.length, resumeUriStart: resumeDataUri.substring(0, 80) + '...'});
+      console.log("Calling AI Tailor with input:", {jobDescriptionLength: jobDescription.length, resumeUriStart: cleanDataUri.substring(0, 80) + '...'});
 
-      const result: AtsResumeTailorOutput = await atsResumeTailor(input);
+      const result: AtsResumeTailorOutput = await atsResumeTailor(input); // Calls the server action/flow
 
       console.log("AI Tailor Result:", {tailoredResumeLength: result.tailoredResume.length});
 
@@ -108,9 +153,11 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
 
     } catch (err: any) {
       console.error("Error tailoring resume:", err);
-      const errorMessage = err.message || "An unexpected error occurred.";
-      setError(`Failed to tailor resume: ${errorMessage}`);
-      toast({ variant: "destructive", title: "Tailoring Error", description: errorMessage });
+      // Check for specific Genkit/API error structure if possible
+      const detail = err.errorDetails?.[0]?.fieldViolations?.[0]?.description || err.message || "An unexpected error occurred.";
+      const errorMessage = `Failed to tailor resume: ${detail}`;
+      setError(errorMessage);
+      toast({ variant: "destructive", title: "Tailoring Error", description: detail, duration: 10000 }); // Longer duration for errors
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +196,33 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
 
   return (
     <div className="space-y-6">
-       {/* Removed Resume Selection - now handled by parent */}
+        {/* Resume Selection Input (Moved from ResumeUpload) */}
+         <div className="space-y-2">
+             <Label htmlFor="resume-upload">Select Your Resume</Label>
+             <Input
+                id="resume-upload"
+                type="file"
+                accept=".pdf,.docx"
+                onChange={handleFileChange}
+                className="file:text-primary file:font-medium"
+                disabled={isLoading || isScraping}
+             />
+             {selectedResumeFile && (
+                <div className="mt-2 p-3 border rounded-md bg-secondary/50 flex justify-between items-center">
+                    <div className="flex items-center space-x-2 text-sm overflow-hidden">
+                        <FileText className="h-4 w-4 text-secondary-foreground flex-shrink-0" />
+                        <span className="font-medium text-secondary-foreground truncate">{selectedResumeFile.name}</span>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={handleRemoveFile} disabled={isLoading || isScraping}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <span className="sr-only">Remove file</span>
+                    </Button>
+                </div>
+             )}
+             <p className="text-xs text-muted-foreground">
+                Upload your resume (PDF or DOCX) to tailor it for a job.
+             </p>
+         </div>
 
       {/* Job Description Input */}
       <div className="space-y-2">
@@ -165,7 +238,7 @@ export default function AtsResumeTailor({ selectedResumeFile }: AtsResumeTailorP
             />
             <Button onClick={handleScrapeJob} disabled={isLoading || isScraping || !jobUrl} className="flex-shrink-0"> {/* Prevent button shrinking */}
                 {isScraping ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Scrape Job
+                {isScraping ? 'Scraping...' : 'Scrape Job'}
             </Button>
          </div>
       </div>
