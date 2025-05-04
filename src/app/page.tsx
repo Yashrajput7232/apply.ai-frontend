@@ -33,7 +33,8 @@ export default function LandingPage() {
           <div className="hidden group-hover:block">
             {/* Wrap LoginWithGoogle to control visibility and potentially size */}
             {/* If LoginWithGoogle component structure prevents direct size prop, adjust its internal button or wrap it */}
-             <LoginWithGoogle size="lg" /> {/* Pass size="lg" to the custom component */}
+             {/* Added group-hover:text-foreground */}
+             <LoginWithGoogle size="lg" className="group-hover:text-foreground" />
           </div>
         </div>
       </section>
