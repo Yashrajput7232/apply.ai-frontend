@@ -2,13 +2,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Briefcase, LayoutDashboard } from 'lucide-react'; // Removed LogIn, LogOut
-import { Button } from '@/components/ui/button';
-// Removed useSession, signIn, signOut imports
-// Removed Avatar and DropdownMenu imports
+import { Briefcase } from 'lucide-react'; // Removed LayoutDashboard, LogIn, LogOut
+import LoginWithGoogle from "@/components/ui/google-login"; // Import LoginWithGoogle
 
 export default function Header() {
-  // Removed session and status hooks
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -22,18 +19,11 @@ export default function Header() {
         </Link>
 
         {/* Navigation/Actions */}
-        <nav className="flex items-center space-x-4">
-          {/* Link to Dashboard */}
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-               <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-          </Link>
+         {/* Add Login Button */}
+         <LoginWithGoogle size="sm" />
 
-          {/* Removed Auth Buttons / User Menu */}
-        </nav>
       </div>
     </header>
   );
 }
+

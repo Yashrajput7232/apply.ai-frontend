@@ -29,11 +29,7 @@ export default function LandingPage() {
               </Button>
           </Link>
           {/* Login With Google Button - Hidden by default, visible on hover */}
-          {/* Apply size="lg" via props or className manipulation if LoginWithGoogle doesn't accept size prop */}
           <div className="hidden group-hover:block">
-            {/* Wrap LoginWithGoogle to control visibility and potentially size */}
-            {/* If LoginWithGoogle component structure prevents direct size prop, adjust its internal button or wrap it */}
-             {/* Added group-hover:text-foreground */}
              <LoginWithGoogle size="lg" className="group-hover:text-foreground" />
           </div>
         </div>
@@ -95,14 +91,22 @@ export default function LandingPage() {
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
             Ready to boost your job search?
           </h2>
-           {/* Direct link to Dashboard */}
-           <Link href="/dashboard">
-              <Button variant="default" size="lg">
-                  Access Your Dashboard
-              </Button>
-           </Link>
+           {/* Button Container with Hover Effect */}
+            <div className="relative group inline-block"> {/* Add group class and inline-block */}
+              {/* Access Dashboard Button - Visible by default, hidden on hover */}
+              <Link href="/dashboard" className="block group-hover:hidden">
+                  <Button variant="default" size="lg">
+                      Access Your Dashboard
+                  </Button>
+              </Link>
+              {/* Login With Google Button - Hidden by default, visible on hover */}
+              <div className="hidden group-hover:block">
+                  <LoginWithGoogle size="lg" className="group-hover:text-foreground" />
+              </div>
+            </div>
         </div>
       </section>
     </div>
   );
 }
+
