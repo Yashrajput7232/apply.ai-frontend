@@ -1,10 +1,11 @@
-'use client'; // Keep 'use client' as LoginWithGoogle requires client-side interaction
+
+'use client';
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Briefcase, Target, Mail, FileText } from 'lucide-react';
-import LoginWithGoogle from "@/components/ui/google-login"; // Re-import the component
+import LoginWithGoogle from "@/components/ui/google-login";
 
 export default function LandingPage() {
 
@@ -19,15 +20,21 @@ export default function LandingPage() {
         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
         </p>
-        {/* Link to Dashboard */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center"> {/* Container for buttons */}
-            <Link href="/dashboard">
-                <Button size="lg">
-                    Go to Dashboard
-                </Button>
-            </Link>
-            {/* Add the LoginWithGoogle button */}
-            <LoginWithGoogle/>
+        {/* Button Container with Hover Effect */}
+        <div className="relative group"> {/* Add group class for hover effect */}
+          {/* Go to Dashboard Button - Visible by default, hidden on hover */}
+          <Link href="/dashboard" className="block group-hover:hidden">
+              <Button size="lg">
+                  Go to Dashboard
+              </Button>
+          </Link>
+          {/* Login With Google Button - Hidden by default, visible on hover */}
+          {/* Apply size="lg" via props or className manipulation if LoginWithGoogle doesn't accept size prop */}
+          <div className="hidden group-hover:block">
+            {/* Wrap LoginWithGoogle to control visibility and potentially size */}
+            {/* If LoginWithGoogle component structure prevents direct size prop, adjust its internal button or wrap it */}
+             <LoginWithGoogle size="lg" /> {/* Pass size="lg" to the custom component */}
+          </div>
         </div>
       </section>
 
@@ -93,8 +100,6 @@ export default function LandingPage() {
                   Access Your Dashboard
               </Button>
            </Link>
-           {/* Optionally add the login button here too, though it's already in the hero */}
-           {/* <div className="mt-4"> <LoginWithGoogle /> </div> */}
         </div>
       </section>
     </div>
