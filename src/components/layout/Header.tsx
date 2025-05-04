@@ -12,10 +12,7 @@ export default function Header() {
       {/* Use justify-between to push items to opposite ends */}
       <div className="container flex h-14 items-center justify-between">
 
-        {/* Navigation/Actions (Login Button) - Moved to the left */}
-         <LoginWithGoogle size="sm" />
-
-         {/* Branding (Logo + Name) - Moved to the right */}
+         {/* Branding (Logo + Name) - Moved back to the left */}
         <Link href="/" className="flex items-center space-x-2">
           <Briefcase className="h-6 w-6 text-primary" />
           <span className="font-bold sm:inline-block">
@@ -23,8 +20,10 @@ export default function Header() {
           </span>
         </Link>
 
+        {/* Navigation/Actions (Login Button) - Moved back to the right */}
+         <LoginWithGoogle size="sm" />
+
       </div>
     </header>
   );
 }
-
