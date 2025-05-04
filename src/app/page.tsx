@@ -1,14 +1,12 @@
-
-'use client'; // Keep 'use client' if other client-side interactions remain, otherwise remove.
+'use client'; // Keep 'use client' as LoginWithGoogle requires client-side interaction
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Briefcase, Target, Mail, FileText } from 'lucide-react'; // Removed LogIn
-// Removed useSession and signIn imports
+import { Briefcase, Target, Mail, FileText } from 'lucide-react';
+import LoginWithGoogle from "@/components/ui/google-login"; // Re-import the component
 
 export default function LandingPage() {
-  // Removed session and status related hooks and variables
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -21,13 +19,16 @@ export default function LandingPage() {
         <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
         </p>
-        {/* Removed conditional rendering based on session/loading */}
-        {/* Direct link to Dashboard */}
-        <Link href="/dashboard">
-            <Button size="lg">
-                Go to Dashboard
-            </Button>
-        </Link>
+        {/* Link to Dashboard */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center"> {/* Container for buttons */}
+            <Link href="/dashboard">
+                <Button size="lg">
+                    Go to Dashboard
+                </Button>
+            </Link>
+            {/* Add the LoginWithGoogle button */}
+            <LoginWithGoogle/>
+        </div>
       </section>
 
       {/* Features Section */}
@@ -86,13 +87,14 @@ export default function LandingPage() {
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
             Ready to boost your job search?
           </h2>
-           {/* Removed conditional rendering based on session/loading */}
            {/* Direct link to Dashboard */}
            <Link href="/dashboard">
               <Button variant="default" size="lg">
                   Access Your Dashboard
               </Button>
            </Link>
+           {/* Optionally add the login button here too, though it's already in the hero */}
+           {/* <div className="mt-4"> <LoginWithGoogle /> </div> */}
         </div>
       </section>
     </div>
