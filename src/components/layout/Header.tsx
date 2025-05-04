@@ -9,7 +9,8 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between"> {/* Use justify-between */}
+      {/* Use justify-between to push items to opposite ends */}
+      <div className="container flex h-14 items-center justify-between">
         {/* Branding */}
         <Link href="/" className="flex items-center space-x-2">
           <Briefcase className="h-6 w-6 text-primary" />
