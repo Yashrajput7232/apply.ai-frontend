@@ -11,8 +11,8 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden"> {/* Prevent horizontal scroll */}
-      {/* Hero Section - Added animated-gradient-bg class */}
-      <section className="flex-grow flex flex-col items-center justify-center text-center px-4 py-16 relative overflow-hidden animated-gradient-bg">
+      {/* Hero Section - Added animated-gradient-bg class, removed flex-grow */}
+      <section className="flex flex-col items-center justify-center text-center px-4 py-16 relative overflow-hidden animated-gradient-bg">
         {/* Content Container with z-index to stay above background */}
         <div className="relative z-10">
             {/* Animated Briefcase Icon */}
