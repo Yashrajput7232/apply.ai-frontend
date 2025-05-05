@@ -24,6 +24,8 @@ import {
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null); // Added state for email
+  const [userPicture, setUserPicture] = useState<string | null>(null); // Added state for picture
   const router = useRouter();
 
   useEffect(() => {
@@ -31,38 +33,59 @@ export default function Header() {
     const token = Cookies.get('auth_token');
     if (token) {
       setIsLoggedIn(true);
-      // Optionally decode token here to get user info if needed
+      // Attempt to parse token or fetch user info if needed
+      // For simplicity, let's assume the token contains basic info or we get it elsewhere
+      // Example: Decode JWT (requires a library like jwt-decode)
+      try {
+         // const decoded = jwtDecode(token); // Install and import jwt-decode if using
+         // setUserEmail(decoded.email);
+         // setUserPicture(decoded.picture);
+         // Placeholder if token isn't JWT or doesn't have info
+         setUserEmail("Logged In"); // Default message
+      } catch (error) {
+        console.error("Failed to decode token:", error);
+        setUserEmail("Logged In"); // Fallback
+      }
+
     } else {
       setIsLoggedIn(false);
+      setUserEmail(null);
+      setUserPicture(null);
     }
   }, []); // Empty dependency array ensures this runs once on mount
 
   const handleLogout = () => {
     Cookies.remove('auth_token', { path: '/' }); // Clear the cookie
     setIsLoggedIn(false); // Update state
+    setUserEmail(null);
+    setUserPicture(null);
     router.push('/'); // Redirect to landing page
-    router.refresh(); // Refresh page to ensure server state is cleared
+    // No need to refresh, state update will re-render
   };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between">
-        {/* Branding (Logo + Name) */}
+      <div className="container flex h-16 items-center justify-between"> {/* Increased height slightly */}
+        {/* Branding (Logo + Name + Creator) */}
         <Link href="/" className="flex items-center space-x-2">
-          <Briefcase className="h-6 w-6 text-primary" />
-          <span className="font-bold sm:inline-block">
-            Apply.ai
-          </span>
+           <Briefcase className="h-6 w-6 text-primary flex-shrink-0" />
+           <div className="flex flex-col">
+             <span className="font-bold sm:inline-block">
+               Apply.ai
+             </span>
+             <span className="text-xs text-muted-foreground -mt-1">
+                by Yash Rajput
+             </span>
+           </div>
         </Link>
 
         {/* Navigation/Actions (Login or Profile) */}
         {isLoggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  {/* Placeholder image/fallback - Replace with user.picture if available */}
-                  <AvatarImage src="" alt="User profile" />
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full"> {/* Adjusted size */}
+                <Avatar className="h-9 w-9"> {/* Adjusted size */}
+                  <AvatarImage src={userPicture || ""} alt="User profile" />
                   <AvatarFallback>
                     <User className="h-5 w-5" />
                   </AvatarFallback>
@@ -73,9 +96,8 @@ export default function Header() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">My Account</p>
-                  {/* Placeholder - Replace with user.email if available */}
-                  <p className="text-xs leading-none text-muted-foreground">
-                    Logged In
+                  <p className="text-xs leading-none text-muted-foreground break-all">
+                    {userEmail || 'Loading...'} {/* Display email */}
                   </p>
                 </div>
               </DropdownMenuLabel>

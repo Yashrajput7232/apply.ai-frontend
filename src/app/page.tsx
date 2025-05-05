@@ -35,6 +35,7 @@ export default function LandingPage() {
               </Link>
               {/* Login With Google Button - Hidden by default, visible on hover */}
               <div className="hidden group-hover:block">
+                 {/* Ensure text color remains foreground on hover within the group */}
                  <LoginWithGoogle size="lg" className="text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
               </div>
             </div>
@@ -94,7 +95,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Call to Action Footer */}
+      {/* Call to Action Section */}
       <section className="py-12 bg-secondary/50">
         <div className="container mx-auto text-center px-4 animate-in fade-in duration-700 delay-500">
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
@@ -110,7 +111,7 @@ export default function LandingPage() {
               </Link>
               {/* Login With Google Button - Hidden by default, visible on hover */}
               <div className="hidden group-hover:block">
-                  {/* Ensure group-hover doesn't conflict with parent group */}
+                  {/* Ensure group-hover doesn't conflict with parent group, explicitly set text color */}
                   <LoginWithGoogle size="lg" className="text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
               </div>
             </div>

@@ -4,7 +4,8 @@ import { Inter } from 'next/font/google'; // Changed font to Inter for professio
 import './globals.css';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/Header';
-import { Toaster } from "@/components/ui/toaster"; // Import Toaster
+import Footer from '@/components/layout/Footer'; // Import Footer
+import { Toaster } from "@/components/ui/toaster";
 
 
 const inter = Inter({
@@ -26,16 +27,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning */}
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased',
+          'min-h-screen bg-background font-sans antialiased flex flex-col', // Added flex flex-col
           inter.variable
         )}
       >
-        {/* Removed SessionProviderWrapper */}
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            {/* Optional Footer can be added here */}
-          </div>
+          {/* Removed SessionProviderWrapper */}
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer /> {/* Add Footer component here */}
           <Toaster /> {/* Add Toaster component here */}
       </body>
     </html>
