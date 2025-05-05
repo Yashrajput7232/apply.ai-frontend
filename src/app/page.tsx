@@ -10,27 +10,30 @@ import LoginWithGoogle from "@/components/ui/google-login";
 export default function LandingPage() {
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden"> {/* Prevent horizontal scroll */}
       {/* Hero Section */}
       <section className="flex-grow flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/30">
-        <Briefcase className="h-16 w-16 text-primary mb-4" />
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+        {/* Animated Briefcase Icon */}
+        <Briefcase className="h-16 w-16 text-primary mb-4 animate-in fade-in zoom-in duration-500" />
+        {/* Animated Heading */}
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
           Welcome to Apply.ai
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl">
+        {/* Animated Paragraph */}
+        <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
           Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
         </p>
-        {/* Button Container with Hover Effect */}
-        <div className="relative group"> {/* Add group class for hover effect */}
+        {/* Animated Button Container */}
+        <div className="relative group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
           {/* Go to Dashboard Button - Visible by default, hidden on hover */}
           <Link href="/dashboard" className="block group-hover:hidden">
-              <Button size="lg">
+              <Button size="lg" className="transition-transform duration-200 ease-in-out hover:scale-105">
                   Go to Dashboard
               </Button>
           </Link>
           {/* Login With Google Button - Hidden by default, visible on hover */}
           <div className="hidden group-hover:block">
-             <LoginWithGoogle size="lg" className="group-hover:text-foreground" />
+             <LoginWithGoogle size="lg" className="group-hover:text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
           </div>
         </div>
       </section>
@@ -38,11 +41,12 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
+          <h2 className="text-3xl font-bold text-center mb-12 text-foreground animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
             Features
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+            {/* Animated Feature Card 1 */}
+            <Card className="text-center shadow-md hover:shadow-lg transition-shadow animate-in fade-in slide-in-from-bottom-10 duration-700 delay-200">
               <CardHeader>
                 <div className="flex justify-center mb-4">
                   <Target className="h-10 w-10 text-primary" />
@@ -55,7 +59,8 @@ export default function LandingPage() {
                 </CardDescription>
               </CardContent>
             </Card>
-            <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+            {/* Animated Feature Card 2 */}
+            <Card className="text-center shadow-md hover:shadow-lg transition-shadow animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
               <CardHeader>
                 <div className="flex justify-center mb-4">
                    <FileText className="h-10 w-10 text-primary" />
@@ -68,7 +73,8 @@ export default function LandingPage() {
                 </CardDescription>
               </CardContent>
             </Card>
-             <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+            {/* Animated Feature Card 3 */}
+             <Card className="text-center shadow-md hover:shadow-lg transition-shadow animate-in fade-in slide-in-from-bottom-10 duration-700 delay-400">
                <CardHeader>
                  <div className="flex justify-center mb-4">
                     <Mail className="h-10 w-10 text-primary" />
@@ -87,21 +93,22 @@ export default function LandingPage() {
 
       {/* Call to Action Footer */}
       <section className="py-12 bg-secondary/50">
-        <div className="container mx-auto text-center px-4">
+        <div className="container mx-auto text-center px-4 animate-in fade-in duration-700 delay-500">
           <h2 className="text-2xl font-semibold mb-4 text-foreground">
             Ready to boost your job search?
           </h2>
-           {/* Button Container with Hover Effect */}
-            <div className="relative group inline-block"> {/* Add group class and inline-block */}
+           {/* Animated Button Container */}
+            <div className="relative group inline-block">
               {/* Access Dashboard Button - Visible by default, hidden on hover */}
               <Link href="/dashboard" className="block group-hover:hidden">
-                  <Button variant="default" size="lg">
+                  <Button variant="default" size="lg" className="transition-transform duration-200 ease-in-out hover:scale-105">
                       Access Your Dashboard
                   </Button>
               </Link>
               {/* Login With Google Button - Hidden by default, visible on hover */}
               <div className="hidden group-hover:block">
-                  <LoginWithGoogle size="lg" className="group-hover:text-foreground" />
+                  {/* Ensure group-hover doesn't conflict with parent group */}
+                  <LoginWithGoogle size="lg" className="text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
               </div>
             </div>
         </div>
