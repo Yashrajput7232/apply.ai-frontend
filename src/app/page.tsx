@@ -11,30 +11,33 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden"> {/* Prevent horizontal scroll */}
-      {/* Hero Section */}
-      <section className="flex-grow flex flex-col items-center justify-center text-center px-4 py-16 bg-gradient-to-b from-background to-secondary/30">
-        {/* Animated Briefcase Icon */}
-        <Briefcase className="h-16 w-16 text-primary mb-4 animate-in fade-in zoom-in duration-500" />
-        {/* Animated Heading */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
-          Welcome to Apply.ai
-        </h1>
-        {/* Animated Paragraph */}
-        <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
-          Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
-        </p>
-        {/* Animated Button Container */}
-        <div className="relative group animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
-          {/* Go to Dashboard Button - Visible by default, hidden on hover */}
-          <Link href="/dashboard" className="block group-hover:hidden">
-              <Button size="lg" className="transition-transform duration-200 ease-in-out hover:scale-105">
-                  Go to Dashboard
-              </Button>
-          </Link>
-          {/* Login With Google Button - Hidden by default, visible on hover */}
-          <div className="hidden group-hover:block">
-             <LoginWithGoogle size="lg" className="group-hover:text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
-          </div>
+      {/* Hero Section - Added animated-gradient-bg class */}
+      <section className="flex-grow flex flex-col items-center justify-center text-center px-4 py-16 relative overflow-hidden animated-gradient-bg">
+        {/* Content Container with z-index to stay above background */}
+        <div className="relative z-10">
+            {/* Animated Briefcase Icon */}
+            <Briefcase className="h-16 w-16 text-primary mb-4 animate-in fade-in zoom-in duration-500 mx-auto" />
+            {/* Animated Heading */}
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100">
+              Welcome to Apply.ai
+            </h1>
+            {/* Animated Paragraph */}
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl animate-in fade-in slide-in-from-bottom-5 duration-700 delay-200">
+              Your AI-powered assistant for navigating the job market. Tailor your resume, find relevant job openings, and craft outreach emails effortlessly.
+            </p>
+            {/* Animated Button Container */}
+            <div className="relative group inline-block animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
+              {/* Go to Dashboard Button - Visible by default, hidden on hover */}
+              <Link href="/dashboard" className="block group-hover:hidden">
+                  <Button size="lg" className="transition-transform duration-200 ease-in-out hover:scale-105">
+                      Go to Dashboard
+                  </Button>
+              </Link>
+              {/* Login With Google Button - Hidden by default, visible on hover */}
+              <div className="hidden group-hover:block">
+                 <LoginWithGoogle size="lg" className="text-foreground transition-transform duration-200 ease-in-out hover:scale-105" />
+              </div>
+            </div>
         </div>
       </section>
 
