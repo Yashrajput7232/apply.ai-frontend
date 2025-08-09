@@ -134,7 +134,6 @@ export default function AtsResumeTailor() {
 
       if (inputType === 'latex') {
          toast({ title: "Compiling LaTeX to PDF..." });
-        //  compileUrl = "https://latex-api-xx5f.onrender.com/compile";
          compileUrl = "https://latex-pdf-compiler.onrender.com/compile";
          payload = {
             "code": latexCode
