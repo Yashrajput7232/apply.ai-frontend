@@ -87,6 +87,7 @@ export default function AtsResumeTailor() {
             method: 'POST',
             body: formData,
         });
+        console.log(extractResponse);
 
         if (!extractResponse.ok) {
             const errorData = await extractResponse.json();
@@ -133,7 +134,8 @@ export default function AtsResumeTailor() {
 
       if (inputType === 'latex') {
          toast({ title: "Compiling LaTeX to PDF..." });
-         compileUrl = "https://latex-api-xx5f.onrender.com/compile";
+        //  compileUrl = "https://latex-api-xx5f.onrender.com/compile";
+         compileUrl = "https://latex-pdf-compiler.onrender.com/compile";
          payload = {
             "code": latexCode
          }
