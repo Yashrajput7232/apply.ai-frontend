@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google'; // Changed font to Inter for professionalism
 import './globals.css';
@@ -24,18 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning> {/* Added suppressHydrationWarning */}
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased flex flex-col', // Added flex flex-col
           inter.variable
         )}
       >
-          {/* Removed SessionProviderWrapper */}
           <Header />
           <main className="flex-1">{children}</main>
-          <Footer /> {/* Add Footer component here */}
-          <Toaster /> {/* Add Toaster component here */}
+          <Footer />
+          <Toaster />
       </body>
     </html>
   );
