@@ -7,12 +7,13 @@
  * - atsResumeTailor - A function that tailors a resume to a job description.
  * - AtsResumeTailorInput - The input type for the atsResumeTailor function.
  * - AtsResumeTailorOutput - The return type for the atsResumeTailor function.
+ * 
+ * @deprecated This flow is no longer used by the application frontend, which now calls external services directly.
+ * It is kept for potential future use or reference.
  */
 
 import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
-// Note: The job scraping logic is handled client-side before calling this flow.
-// This flow focuses *only* on the AI tailoring part.
 
 const AtsResumeTailorInputSchema = z.object({
   resumeDataUri: z
@@ -25,7 +26,6 @@ const AtsResumeTailorInputSchema = z.object({
 export type AtsResumeTailorInput = z.infer<typeof AtsResumeTailorInputSchema>;
 
 const AtsResumeTailorOutputSchema = z.object({
-  // Outputting as plain text. Converting to PDF/DOCX requires separate libraries/services.
   tailoredResume: z.string().describe('The tailored resume content as plain text, optimized for the job description and ATS compatibility.'),
 });
 export type AtsResumeTailorOutput = z.infer<typeof AtsResumeTailorOutputSchema>;
@@ -37,8 +37,8 @@ export type AtsResumeTailorOutput = z.infer<typeof AtsResumeTailorOutputSchema>;
  * @returns A promise resolving to the tailored resume content as plain text.
  */
 export async function atsResumeTailor(input: AtsResumeTailorInput): Promise<AtsResumeTailorOutput> {
+  console.warn("atsResumeTailor flow is deprecated and should not be used in new implementations.");
   console.log("Received input for atsResumeTailorFlow:", { resumeUriStart: input.resumeDataUri.substring(0, 50) + '...', jobDescriptionLength: input.jobDescription.length });
-  // Basic validation check (more robust checks can be added)
   if (!input.resumeDataUri.startsWith('data:') || !input.resumeDataUri.includes(';base64,')) {
     throw new Error("Invalid resumeDataUri format. Expected 'data:<mimetype>;base64,<encoded_data>'.");
   }
@@ -57,8 +57,6 @@ const atsResumeTailorPrompt = ai.definePrompt({
     }),
   },
   output: {
-    // Expecting plain text output from the LLM for simplicity.
-    // Formatting might be lost, but content is prioritized.
     schema: z.object({
       tailoredResume: z.string().describe('The optimized resume content as plain text.'),
     }),
@@ -99,27 +97,22 @@ const atsResumeTailorFlow = ai.defineFlow<
   },
   async input => {
     try {
-        console.log("Generating tailored resume...");
+        console.log("Generating tailored resume via deprecated flow...");
         const {output} = await atsResumeTailorPrompt(input);
-        console.log("Tailored resume generated successfully.");
+        console.log("Tailored resume generated successfully via deprecated flow.");
 
         if (!output?.tailoredResume) {
              console.error("AI did not return tailored resume content.");
             throw new Error("AI generation failed: No tailored resume content received.");
         }
-        // Basic check for empty or placeholder output
-        if (output.tailoredResume.trim().length < 100) { // Arbitrary threshold
+        if (output.tailoredResume.trim().length < 100) {
              console.warn("Generated resume seems very short:", output.tailoredResume);
-             // Decide whether to throw an error or return the short content
-             // throw new Error("AI generation failed: Output content is too short.");
         }
 
-        return { tailoredResume: output.tailoredResume.trim() }; // Trim whitespace
+        return { tailoredResume: output.tailoredResume.trim() };
     } catch (error: any) {
-        console.error("Error in atsResumeTailorFlow:", error);
-        // Rethrow or handle the error appropriately
+        console.error("Error in deprecated atsResumeTailorFlow:", error);
         throw new Error(`AI tailoring process failed: ${error.message || error}`);
     }
   }
 );
-
