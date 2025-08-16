@@ -71,7 +71,7 @@ export default function AtsResumeTailor() {
         job_description: jobDescription,
         resume: inputType === 'file' ? extractedText : latexCode
       };
-      const res = await fetch("https://resumetailor-0b6a.onrender.com/generate_tailored_resume", {
+      const res = await fetch("https://apply-ai-6gm8.onrender.com/generate_tailored_resume", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
